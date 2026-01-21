@@ -8,7 +8,6 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/validators.dart';
 import '../../core/utils/image_helper.dart';
 import '../../core/utils/storage_helper.dart';
-import 'dart:io';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -78,7 +77,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 Navigator.pop(ctx);
                 final xfile = await ImageHelper.pickImageFromCamera();
                 if (xfile != null) {
-                  final url = await StorageHelper.uploadImage(File(xfile.path), user.id);
+                  final url = await StorageHelper.uploadImage(xfile, user.id);
                   if (url != null) setState(() => _fotoUrl = url);
                 }
               },
@@ -90,7 +89,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 Navigator.pop(ctx);
                 final xfile = await ImageHelper.pickImageFromGallery();
                 if (xfile != null) {
-                  final url = await StorageHelper.uploadImage(File(xfile.path), user.id);
+                  final url = await StorageHelper.uploadImage(xfile, user.id);
                   if (url != null) setState(() => _fotoUrl = url);
                 }
               },

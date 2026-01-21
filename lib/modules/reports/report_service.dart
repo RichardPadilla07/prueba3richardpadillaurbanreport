@@ -16,7 +16,14 @@ class ReportService {
   }
 
   Future<void> createReport(Report report) async {
-    await _client.from(table).insert(report.toMap());
+    // Al crear un reporte dejamos que Supabase genere el UUID,
+    // por eso removemos "id" si viene vacío.
+    final data = report.toMap();
+    final id = data['id'];
+    if (id == null || (id is String && id.isEmpty)) {
+      data.remove('id');
+    }
+    await _client.from(table).insert(data);
   }
 
   Future<void> updateReport(Report report) async {
