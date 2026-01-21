@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -17,20 +18,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   void initState() {
     super.initState();
-    // Si el usuario ya está logueado, lo deslogueamos para evitar conflictos
-    Supabase.instance.client.auth.signOut();
+    // No desloguear aquí, para mantener la sesión de recuperación activa
   }
 
   Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() { _loading = true; _message = null; });
     try {
-      final uri = Uri.base;
       final resp = await Supabase.instance.client.auth.updateUser(
         UserAttributes(password: _passwordController.text.trim()),
       );
       if (resp.user != null) {
-        setState(() { _message = 'Contraseña actualizada. Ahora puedes iniciar sesión.'; });
+        setState(() { _message = 'Contraseña actualizada. Redirigiendo al inicio de sesión...'; });
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) {
+          // Usar GoRouter para redirigir
+          context.go('/login');
+        }
       } else {
         setState(() { _message = 'Error al actualizar contraseña.'; });
       }
