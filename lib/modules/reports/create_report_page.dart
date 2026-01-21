@@ -271,6 +271,14 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
+                          onPressed: _getCurrentLocation,
+                          icon: const Icon(Icons.my_location),
+                          label: const Text('Dar ubicación actual'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
                           onPressed: _pickImage,
                           icon: const Icon(Icons.photo_camera),
                           label: Text(_fotoUrl == null ? 'Seleccionar foto' : 'Foto seleccionada'),
@@ -308,15 +316,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getCurrentLocation,
-        child: _loadingLocation
-            ? const CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              )
-            : const Icon(Icons.my_location),
-      ),
+      // Sin botón flotante de ubicación aquí
     );
   }
 }
