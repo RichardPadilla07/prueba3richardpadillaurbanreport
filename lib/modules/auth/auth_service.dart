@@ -2,6 +2,13 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
+    Future<void> updateUserName(String name) async {
+      final user = _client.auth.currentUser;
+      if (user == null) return;
+      await _client.auth.updateUser(
+        UserAttributes(data: {'name': name}),
+      );
+    }
   final _client = Supabase.instance.client;
 
   Future<AuthResponse> signUp({

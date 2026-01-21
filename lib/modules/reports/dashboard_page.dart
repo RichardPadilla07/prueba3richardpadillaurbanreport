@@ -33,13 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     // Si se navega con el parámetro 'refresh', recargar la lista automáticamente
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final extra = GoRouter.of(context).routerDelegate.currentConfiguration.extra;
-      if (extra is Map && extra['refresh'] == true) {
-        _loadReports();
-        GoRouter.of(context).routerDelegate.currentConfiguration = GoRouter.of(context).routerDelegate.currentConfiguration.copyWith(extra: null);
-      }
-    });
+    // Para refrescar la lista, usar setState en el callback de Navigator
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis Reportes'),

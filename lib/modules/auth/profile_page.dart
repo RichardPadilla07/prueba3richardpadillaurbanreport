@@ -34,7 +34,8 @@ class ProfilePage extends StatelessWidget {
                       await AuthService().updateUserName(nameController.text.trim());
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
-                        context.go('/profile', extra: {'refresh': true});
+                        // Refrescar el widget localmente
+                        (context as Element).markNeedsBuild();
                       }
                     },
                     child: const Text('Guardar cambios'),
