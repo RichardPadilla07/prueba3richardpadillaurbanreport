@@ -26,7 +26,11 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
     try {
       await ReportService().deleteReport(widget.report.id);
       if (mounted) {
-        context.pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Reporte eliminado exitosamente')),
+        );
+        // Volver a la lista y refrescar automáticamente
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       setState(() { _error = 'Error al eliminar'; });
