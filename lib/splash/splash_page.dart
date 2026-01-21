@@ -13,6 +13,15 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
+    // Listener de eventos de Supabase Auth
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.passwordRecovery) {
+        if (mounted) {
+          context.go('/reset-password');
+        }
+      }
+    });
     _redirect();
   }
 
