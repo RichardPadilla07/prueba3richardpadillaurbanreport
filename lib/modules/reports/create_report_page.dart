@@ -193,9 +193,20 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: _pickLocation,
-                          child: Text(_lat == null ? 'Seleccionar ubicación' : 'Ubicación seleccionada'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _pickLocation,
+                              child: Text(_lat == null ? 'Seleccionar ubicación' : 'Ubicación seleccionada'),
+                            ),
+                            if (_lat != null && _lng != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text('Latitud: ${_lat!.toStringAsFixed(6)}\nLongitud: ${_lng!.toStringAsFixed(6)}',
+                                  style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                              ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 8),
