@@ -30,6 +30,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
   double? _lat;
   double? _lng;
   bool _loading = false;
+  bool _loadingLocation = false;
   String? _error;
   bool get isEdit => widget.reportToEdit != null;
 
@@ -45,15 +46,22 @@ class _CreateReportPageState extends State<CreateReportPage> {
       _lat = r.latitud;
       _lng = r.longitud;
     }
-    _getCurrentLocation();
   }
 
-  Future<void> _getCurrentLocation() async {
+  void _getCurrentLocation() async {
+    setState(() {
+      _loadingLocation = true;
+    });
     final pos = await LocationHelper.getCurrentLocation();
     if (pos != null) {
       setState(() {
         _lat = pos.latitude;
         _lng = pos.longitude;
+        _loadingLocation = false;
+      });
+    } else {
+      setState(() {
+        _loadingLocation = false;
       });
     }
   }
@@ -113,16 +121,29 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   void _submit() async {
-    if (!_formKey.currentState!.validate() || _lat == null || _lng == null || _fotoUrl == null) {
-      setState(() { _error = 'Completa todos los campos y selecciona ubicación/foto.'; });
+    if (!_formKey.currentState!.validate() ||
+        _lat == null ||
+        _lng == null ||
+        _fotoUrl == null) {
+      setState(() {
+        _error = 'Completa todos los campos y selecciona ubicación/foto.';
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Completa todos los campos y selecciona ubicación/foto.'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text(
+              'Completa todos los campos y selecciona ubicación/foto.',
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
       return;
     }
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) throw Exception('No autenticado');
@@ -153,20 +174,31 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(isEdit ? 'Reporte actualizado' : 'Reporte creado')),
+          SnackBar(
+            content: Text(isEdit ? 'Reporte actualizado' : 'Reporte creado'),
+          ),
         );
         // Volver a la pantalla anterior indicando que hubo cambios
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      setState(() { _error = isEdit ? 'Error al editar reporte' : 'Error al crear reporte'; });
+      setState(() {
+        _error = isEdit ? 'Error al editar reporte' : 'Error al crear reporte';
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(isEdit ? 'Error al editar reporte' : 'Error al crear reporte'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(
+              isEdit ? 'Error al editar reporte' : 'Error al crear reporte',
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -180,7 +212,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
           key: _formKey,
           child: Card(
             elevation: 6,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -193,11 +227,14 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   CustomInput(
                     label: 'Descripción',
                     controller: _descripcionController,
-                    validator: (v) => Validators.validateNotEmpty(v, 'descripción'),
+                    validator: (v) =>
+                        Validators.validateNotEmpty(v, 'descripción'),
                   ),
                   DropdownButtonFormField<String>(
                     value: _categoria,
-                    items: AppConstants.categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                    items: AppConstants.categories
+                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                        .toList(),
                     onChanged: (v) => setState(() => _categoria = v!),
                     decoration: const InputDecoration(labelText: 'Categoría'),
                   ),
@@ -209,14 +246,19 @@ class _CreateReportPageState extends State<CreateReportPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ElevatedButton(
-                              onPressed: _pickLocation,
-                              child: Text(_lat == null ? 'Seleccionar ubicación' : 'Ubicación seleccionada'),
+                              onPressed: _getCurrentLocation,
+                              child: Text('Dar ubicación actual'),
                             ),
                             if (_lat != null && _lng != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Text('Latitud: ${_lat!.toStringAsFixed(6)}\nLongitud: ${_lng!.toStringAsFixed(6)}',
-                                  style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                                child: Text(
+                                  'Latitud: ${_lat!.toStringAsFixed(6)}\nLongitud: ${_lng!.toStringAsFixed(6)}',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                           ],
                         ),
@@ -225,7 +267,11 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _pickImage,
-                          child: Text(_fotoUrl == null ? 'Seleccionar foto' : 'Foto seleccionada'),
+                          child: Text(
+                            _fotoUrl == null
+                                ? 'Seleccionar foto'
+                                : 'Foto seleccionada',
+                          ),
                         ),
                       ),
                     ],
@@ -238,7 +284,10 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   if (_error != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                      child: Text(
+                        _error!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     ),
                   const SizedBox(height: 16),
                   CustomButton(
@@ -251,6 +300,15 @@ class _CreateReportPageState extends State<CreateReportPage> {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        child: _loadingLocation
+            ? const CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              )
+            : const Icon(Icons.my_location),
       ),
     );
   }
@@ -298,14 +356,20 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   point: _selected!,
                   width: 40,
                   height: 40,
-                  child: const Icon(Icons.location_on, color: Colors.red, size: 36),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 36,
+                  ),
                 ),
               ],
             ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _selected == null ? null : () => Navigator.of(context).pop(_selected),
+        onPressed: _selected == null
+            ? null
+            : () => Navigator.of(context).pop(_selected),
         label: const Text('Usar ubicación'),
         icon: const Icon(Icons.check),
       ),
