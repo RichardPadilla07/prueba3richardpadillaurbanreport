@@ -18,8 +18,16 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    _loadReports();
+  }
+
+  void _loadReports() {
     final user = Supabase.instance.client.auth.currentUser;
-    _futureReports = user != null ? ReportService().getUserReports(user.id) : Future.value([]);
+    setState(() {
+      _futureReports = user != null
+          ? ReportService().getUserReports(user.id)
+          : Future.value([]);
+    });
   }
 
   @override
@@ -70,8 +78,11 @@ class _DashboardPageState extends State<DashboardPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/create');
+        onPressed: () async {
+          final result = await context.push('/create');
+          if (result == true) {
+            _loadReports();
+          }
         },
         child: const Icon(Icons.add),
       ),

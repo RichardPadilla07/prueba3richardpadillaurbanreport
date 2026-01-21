@@ -143,7 +143,8 @@ class _CreateReportPageState extends State<CreateReportPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(isEdit ? 'Reporte actualizado' : 'Reporte creado')),
         );
-        context.go('/dashboard');
+        // Volver a la pantalla anterior indicando que hubo cambios
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       setState(() { _error = isEdit ? 'Error al editar reporte' : 'Error al crear reporte'; });
