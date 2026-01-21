@@ -3,7 +3,7 @@ import 'report_model.dart';
 
 class ReportService {
   final _client = Supabase.instance.client;
-  final String table = 'reportes';
+  final String table = 'reports';
 
   Future<List<Report>> getUserReports(String userId) async {
     final res = await _client.from(table).select().eq('usuario_id', userId).order('created_at', ascending: false);
