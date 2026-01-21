@@ -181,9 +181,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
             content: Text(isEdit ? 'Reporte actualizado' : 'Reporte creado'),
           ),
         );
-        // Si es edición, navegar a la pantalla principal de reportes y refrescar
+        // Si es edición, navegar a la pantalla principal de reportes y forzar actualización
         if (isEdit) {
-          context.go('/dashboard', extra: {'refresh': true});
+          Navigator.of(context).pop(true); // Regresa y fuerza actualización en dashboard
         } else {
           Navigator.of(context).pop(true);
         }
@@ -269,14 +269,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: _getCurrentLocation,
-                          icon: const Icon(Icons.my_location),
-                          label: const Text('Dar ubicación actual'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: _pickImage,

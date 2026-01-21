@@ -17,6 +17,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   late Future<List<Report>> _futureReports;
   LatLng? _currentLocation;
+  final mapController = MapController();
 
   @override
   void initState() {
@@ -31,6 +32,8 @@ class _MapPageState extends State<MapPage> {
       setState(() {
         _currentLocation = LatLng(pos.latitude, pos.longitude);
       });
+      // Centrar el mapa en la ubicación actual
+      mapController.move(_currentLocation!, 15);
     }
   }
 
@@ -60,6 +63,7 @@ class _MapPageState extends State<MapPage> {
           return Stack(
             children: [
               FlutterMap(
+                mapController: mapController,
                 options: MapOptions(
                   initialCenter: _currentLocation ?? const LatLng(19.4326, -99.1332),
                   initialZoom: 13,
