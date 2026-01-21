@@ -18,8 +18,6 @@ class _MapPageState extends State<MapPage> {
   late Future<List<Report>> _futureReports;
   LatLng? _currentLocation;
 
-  bool _loadingLocation = true;
-
   @override
   void initState() {
     super.initState();
@@ -28,15 +26,11 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _getLocation() async {
-    setState(() { _loadingLocation = true; });
     final pos = await LocationHelper.getCurrentLocation();
     if (pos != null) {
       setState(() {
         _currentLocation = LatLng(pos.latitude, pos.longitude);
-        _loadingLocation = false;
       });
-    } else {
-      setState(() { _loadingLocation = false; });
     }
   }
 

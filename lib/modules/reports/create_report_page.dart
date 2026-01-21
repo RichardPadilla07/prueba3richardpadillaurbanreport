@@ -8,6 +8,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/validators.dart';
 import '../../core/utils/image_helper.dart';
 import '../../core/utils/storage_helper.dart';
+import '../../core/utils/location_helper.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -43,6 +44,17 @@ class _CreateReportPageState extends State<CreateReportPage> {
       _fotoUrl = r.fotoUrl;
       _lat = r.latitud;
       _lng = r.longitud;
+    }
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    final pos = await LocationHelper.getCurrentLocation();
+    if (pos != null) {
+      setState(() {
+        _lat = pos.latitude;
+        _lng = pos.longitude;
+      });
     }
   }
 
