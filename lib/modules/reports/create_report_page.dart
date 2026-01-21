@@ -26,6 +26,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
   final _tituloController = TextEditingController();
   final _descripcionController = TextEditingController();
   String _categoria = AppConstants.categories.first;
+  String _estado = 'pendiente';
   String? _fotoUrl;
   double? _lat;
   double? _lng;
@@ -45,6 +46,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
       _fotoUrl = r.fotoUrl;
       _lat = r.latitud;
       _lng = r.longitud;
+      _estado = r.estado;
     }
   }
 
@@ -152,6 +154,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           titulo: _tituloController.text.trim(),
           descripcion: _descripcionController.text.trim(),
           categoria: _categoria,
+          estado: _estado,
           latitud: _lat!,
           longitud: _lng!,
           fotoUrl: _fotoUrl!,
@@ -164,7 +167,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           titulo: _tituloController.text.trim(),
           descripcion: _descripcionController.text.trim(),
           categoria: _categoria,
-          estado: 'pendiente',
+          estado: _estado,
           latitud: _lat!,
           longitud: _lng!,
           fotoUrl: _fotoUrl!,
@@ -178,8 +181,12 @@ class _CreateReportPageState extends State<CreateReportPage> {
             content: Text(isEdit ? 'Reporte actualizado' : 'Reporte creado'),
           ),
         );
-        // Volver a la pantalla anterior indicando que hubo cambios
-        Navigator.of(context).pop(true);
+        // Si es edición, navegar a la pantalla principal de reportes y refrescar
+        if (isEdit) {
+          context.go('/dashboard', extra: {'refresh': true});
+        } else {
+          Navigator.of(context).pop(true);
+        }
       }
     } catch (e) {
       setState(() {
@@ -218,64 +225,75 @@ class _CreateReportPageState extends State<CreateReportPage> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  CustomInput(
-                    label: 'Título',
-                    controller: _tituloController,
-                    validator: (v) => Validators.validateNotEmpty(v, 'título'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          label: 'Título',
+                          controller: _tituloController,
+                          validator: (v) => Validators.validateNotEmpty(v, 'título'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _categoria,
+                          items: AppConstants.categories
+                              .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                              .toList(),
+                          onChanged: (v) => setState(() => _categoria = v!),
+                          decoration: const InputDecoration(labelText: 'Categoría'),
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 16),
                   CustomInput(
                     label: 'Descripción',
                     controller: _descripcionController,
-                    validator: (v) =>
-                        Validators.validateNotEmpty(v, 'descripción'),
+                    validator: (v) => Validators.validateNotEmpty(v, 'descripción'),
                   ),
+                  const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _categoria,
-                    items: AppConstants.categories
-                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _categoria = v!),
-                    decoration: const InputDecoration(labelText: 'Categoría'),
+                    value: _estado,
+                    items: const [
+                      DropdownMenuItem(value: 'pendiente', child: Text('Pendiente')),
+                      DropdownMenuItem(value: 'en_proceso', child: Text('En proceso')),
+                      DropdownMenuItem(value: 'resuelto', child: Text('Resuelto')),
+                    ],
+                    onChanged: (v) => setState(() => _estado = v!),
+                    decoration: const InputDecoration(labelText: 'Estado'),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ElevatedButton(
-                              onPressed: _getCurrentLocation,
-                              child: Text('Dar ubicación actual'),
-                            ),
-                            if (_lat != null && _lng != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  'Latitud: ${_lat!.toStringAsFixed(6)}\nLongitud: ${_lng!.toStringAsFixed(6)}',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                          ],
+                        child: ElevatedButton.icon(
+                          onPressed: _getCurrentLocation,
+                          icon: const Icon(Icons.my_location),
+                          label: const Text('Dar ubicación actual'),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 16),
                       Expanded(
-                        child: ElevatedButton(
+                        child: ElevatedButton.icon(
                           onPressed: _pickImage,
-                          child: Text(
-                            _fotoUrl == null
-                                ? 'Seleccionar foto'
-                                : 'Foto seleccionada',
-                          ),
+                          icon: const Icon(Icons.photo_camera),
+                          label: Text(_fotoUrl == null ? 'Seleccionar foto' : 'Foto seleccionada'),
                         ),
                       ),
                     ],
                   ),
+                  if (_lat != null && _lng != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Latitud: ${_lat!.toStringAsFixed(6)}   Longitud: ${_lng!.toStringAsFixed(6)}',
+                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ),
                   if (_fotoUrl != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -284,12 +302,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   if (_error != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        _error!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
+                      child: Text(_error!, style: const TextStyle(color: Colors.red)),
                     ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   CustomButton(
                     text: isEdit ? 'Guardar cambios' : 'Crear reporte',
                     onPressed: _submit,

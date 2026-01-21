@@ -36,6 +36,15 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Si se navega con el parámetro 'refresh', recargar los reportes automáticamente
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final extra = ModalRoute.of(context)?.settings.arguments;
+      if (extra is Map && extra['refresh'] == true) {
+        setState(() {
+          _futureReports = ReportService().getUnresolvedReports();
+        });
+      }
+    });
     return Scaffold(
       appBar: AppBar(title: const Text('Mapa de Reportes')),
       body: FutureBuilder<List<Report>>(

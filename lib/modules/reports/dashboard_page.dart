@@ -32,6 +32,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Si se navega con el parámetro 'refresh', recargar la lista automáticamente
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final extra = GoRouter.of(context).routerDelegate.currentConfiguration.extra;
+      if (extra is Map && extra['refresh'] == true) {
+        _loadReports();
+        GoRouter.of(context).routerDelegate.currentConfiguration = GoRouter.of(context).routerDelegate.currentConfiguration.copyWith(extra: null);
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis Reportes'),
@@ -65,10 +73,24 @@ class _DashboardPageState extends State<DashboardPage> {
             itemCount: reports.length,
             itemBuilder: (context, i) {
               final r = reports[i];
+              String estadoFormal;
+              switch (r.estado) {
+                case 'pendiente':
+                  estadoFormal = 'Pendiente';
+                  break;
+                case 'en_proceso':
+                  estadoFormal = 'En proceso';
+                  break;
+                case 'resuelto':
+                  estadoFormal = 'Resuelto';
+                  break;
+                default:
+                  estadoFormal = r.estado;
+              }
               return ListTile(
                 title: Text(r.titulo),
                 subtitle: Text(r.categoria),
-                trailing: Text(r.estado),
+                trailing: Text(estadoFormal),
                 onTap: () {
                   context.push('/detail', extra: r);
                 },

@@ -8,6 +8,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = AuthService().currentUser;
+    final nameController = TextEditingController(text: user?.userMetadata?['name'] ?? '');
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
       body: user == null
@@ -17,8 +18,27 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Nombre: ${user.userMetadata?['name'] ?? ''}'),
-                  Text('Correo: ${user.email ?? ''}'),
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Nombre'),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    initialValue: user.email ?? '',
+                    decoration: const InputDecoration(labelText: 'Correo'),
+                    enabled: false,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await AuthService().updateUserName(nameController.text.trim());
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
+                        context.go('/profile', extra: {'refresh': true});
+                      }
+                    },
+                    child: const Text('Guardar cambios'),
+                  ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
