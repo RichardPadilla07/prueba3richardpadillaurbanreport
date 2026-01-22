@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() { _error = 'Error de autenticación'; });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error de autenticación'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Error de autenticación'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                       if (_error != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                          child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ),
                       const SizedBox(height: 16),
                       CustomButton(

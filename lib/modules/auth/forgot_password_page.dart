@@ -33,7 +33,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       setState(() { _message = 'Error al enviar correo.'; });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al enviar correo'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Error al enviar correo'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {

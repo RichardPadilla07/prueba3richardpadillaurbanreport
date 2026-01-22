@@ -132,11 +132,11 @@ class _CreateReportPageState extends State<CreateReportPage> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
+          SnackBar(
+            content: const Text(
               'Completa todos los campos y selecciona ubicación/foto.',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -198,7 +198,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
             content: Text(
               isEdit ? 'Error al editar reporte' : 'Error al crear reporte',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -291,7 +291,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         'Latitud: ${_lat!.toStringAsFixed(6)}   Longitud: ${_lng!.toStringAsFixed(6)}',
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                       ),
                     ),
                   if (_fotoUrl != null)
@@ -302,7 +302,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   if (_error != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                      child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                     ),
                   const SizedBox(height: 24),
                   CustomButton(
@@ -363,9 +363,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   point: _selected!,
                   width: 40,
                   height: 40,
-                  child: const Icon(
+                  child: Icon(
                     Icons.location_on,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 36,
                   ),
                 ),

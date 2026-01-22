@@ -128,7 +128,7 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                         text: 'Eliminar',
                         onPressed: _delete,
                         loading: _loading,
-                        color: Colors.red[700],
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ],
@@ -136,7 +136,7 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12.0),
-                    child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                    child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                   ),
               ],
             ),

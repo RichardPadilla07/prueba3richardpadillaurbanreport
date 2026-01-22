@@ -3,37 +3,37 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Paleta masculina y profesional
-  static const Color primary = Color(0xFF232946); // Azul oscuro elegante
-  static const Color secondary = Color(0xFF2E4374); // Azul profundo
-  static const Color accent = Color(0xFFF4D35E); // Amarillo dorado para detalles
-  static const Color background = Color(0xFFF5F6FA); // Fondo claro moderno
-  static const Color surface = Color(0xFFFFFFFF); // Tarjetas y superficies
+  static const Color primary = Color(0xFF181818); // Negro profundo
+  static const Color secondary = Color(0xFF232323); // Negro alternativo
+  static const Color accent = Color(0xFFFFD600); // Amarillo vibrante
+  static const Color background = Color(0xFFFFFFFF); // Fondo blanco
+  static const Color surface = Color(0xFFFFFFFF); // Tarjetas y superficies blancas
   static const Color error = Color(0xFFB00020);
-  static const Color textPrimary = Color(0xFF232946);
-  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textPrimary = Color(0xFFFFFFFF); // Texto blanco
+  static const Color textSecondary = Color(0xFFBDBDBD); // Gris claro
 
   static final lightTheme = ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.light,
       primary: primary,
-      onPrimary: Colors.white,
+      onPrimary: accent,
       secondary: accent,
       onSecondary: primary,
       error: error,
       onError: Colors.white,
       background: background,
-      onBackground: textPrimary,
+      onBackground: primary,
       surface: surface,
-      onSurface: textPrimary,
+      onSurface: primary,
     ),
     scaffoldBackgroundColor: background,
     appBarTheme: const AppBarTheme(
       backgroundColor: primary,
-      foregroundColor: Colors.white,
+      foregroundColor: accent,
       elevation: 0,
       centerTitle: true,
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: Color(0xFFFFD600),
         fontWeight: FontWeight.bold,
         fontSize: 22,
         letterSpacing: 1.2,
@@ -58,14 +58,14 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primary,
-        foregroundColor: Colors.white,
+        backgroundColor: accent,
+        foregroundColor: primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
         elevation: 4,
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        shadowColor: secondary.withOpacity(0.2),
+        shadowColor: accent.withOpacity(0.2),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
@@ -80,7 +80,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
       ),
-      shadowColor: secondary.withOpacity(0.08),
+      shadowColor: accent.withOpacity(0.08),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: accent,
@@ -91,12 +91,12 @@ class AppTheme {
       color: accent,
       linearTrackColor: secondary,
     ),
-    iconTheme: const IconThemeData(color: secondary, size: 26),
+    iconTheme: const IconThemeData(color: accent, size: 26),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textPrimary),
       headlineMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: textPrimary),
       titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textPrimary),
-      bodyLarge: TextStyle(fontSize: 16, color: textPrimary),
+      bodyLarge: TextStyle(fontSize: 16, color: textSecondary),
       bodyMedium: TextStyle(fontSize: 14, color: textSecondary),
       labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: accent),
     ),

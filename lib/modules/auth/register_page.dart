@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() { _error = 'Error al registrar'; });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al registrar'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Error al registrar'), backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {
@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (_error != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                          child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ),
                       const SizedBox(height: 16),
                       CustomButton(
