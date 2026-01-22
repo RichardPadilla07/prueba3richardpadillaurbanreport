@@ -58,7 +58,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Recuperar contraseña', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      const Text('Recuperar contraseña', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
                       const SizedBox(height: 24),
                       CustomInput(
                         label: 'Correo',
@@ -76,11 +76,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(_message!),
                         ),
-                      TextButton(
-                        onPressed: () {
-                          context.go('/login');
-                        },
-                        child: const Text('Volver a login'),
+                      CustomButton(
+                        text: 'Volver a login',
+                        onPressed: () => context.go('/login'),
+                        color: Colors.black,
                       ),
                     ],
                   ),

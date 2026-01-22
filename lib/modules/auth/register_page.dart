@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Crear cuenta', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      const Text('Crear cuenta', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
                       const SizedBox(height: 24),
                       CustomInput(
                         label: 'Nombre',
@@ -93,11 +93,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         onPressed: _register,
                         loading: _loading,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          context.go('/login');
-                        },
-                        child: const Text('¿Ya tienes cuenta? Inicia sesión'),
+                      CustomButton(
+                        text: '¿Ya tienes cuenta? Inicia sesión',
+                        onPressed: () => context.go('/login'),
+                        color: Colors.black,
                       ),
                     ],
                   ),

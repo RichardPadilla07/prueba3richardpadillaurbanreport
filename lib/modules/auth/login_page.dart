@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('UrbanReport', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      const Text('UrbanReport', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
                       const SizedBox(height: 24),
                       CustomInput(
                         label: 'Correo',
@@ -86,17 +86,16 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _login,
                         loading: _loading,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/forgot');
-                        },
-                        child: const Text('¿Olvidaste tu contraseña?'),
+                      CustomButton(
+                        text: '¿Olvidaste tu contraseña?',
+                        onPressed: () => context.push('/forgot'),
+                        color: Colors.black,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/register');
-                        },
-                        child: const Text('Crear cuenta'),
+                      const SizedBox(height: 8),
+                      CustomButton(
+                        text: 'Crear cuenta',
+                        onPressed: () => context.push('/register'),
+                        color: Colors.black,
                       ),
                     ],
                   ),
