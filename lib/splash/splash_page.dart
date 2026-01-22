@@ -58,7 +58,7 @@ class _SplashPageState extends State<SplashPage> {
             const SizedBox(height: 24),
             const Text(
               'UrbanReport',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             const SizedBox(height: 16),
             const CircularProgressIndicator(),
