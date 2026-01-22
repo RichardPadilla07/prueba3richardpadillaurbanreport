@@ -42,6 +42,46 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
     }
   }
 
+  void _openImage(String url) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(12),
+        child: GestureDetector(
+          onTap: () => Navigator.of(ctx).pop(),
+          child: Hero(
+            tag: 'report-image-${widget.report.id}',
+            child: InteractiveViewer(
+              panEnabled: true,
+              minScale: 1.0,
+              maxScale: 4.0,
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                          : null,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  );
+                },
+                errorBuilder: (c, e, s) => Container(
+                  color: Colors.grey.shade100,
+                  child: const Center(child: Icon(Icons.broken_image, size: 48, color: Colors.black26)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final r = widget.report;
@@ -92,30 +132,42 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                     ),
                     const SizedBox(height: 14),
 
-                    // Image larger and responsive
+                    // Image larger and responsive; tap to view full image
                     if (r.fotoUrl.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          child: Image.network(
-                            r.fotoUrl,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                      : null,
-                                  color: theme.colorScheme.secondary,
+                      GestureDetector(
+                        onTap: () => _openImage(r.fotoUrl),
+                        child: Hero(
+                          tag: 'report-image-${r.id}',
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 220,
+                              child: Container(
+                                color: Colors.grey.shade100,
+                                padding: const EdgeInsets.all(6),
+                                child: Center(
+                                  child: Image.network(
+                                    r.fotoUrl,
+                                    fit: BoxFit.contain,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                              : null,
+                                          color: theme.colorScheme.secondary,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (c, e, s) => Container(
+                                      color: Colors.grey.shade100,
+                                      child: const Center(child: Icon(Icons.broken_image, size: 48, color: Colors.black26)),
+                                    ),
+                                  ),
                                 ),
-                              );
-                            },
-                            errorBuilder: (c, e, s) => Container(
-                              color: Colors.grey.shade100,
-                              child: const Center(child: Icon(Icons.broken_image, size: 48, color: Colors.black26)),
+                              ),
                             ),
                           ),
                         ),
@@ -182,13 +234,11 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                       runSpacing: 8,
                       spacing: 12,
                       children: [
-                        _metaChip(Icons.vpn_key, 'usuario_id', r.usuarioId),
                         _metaChip(Icons.title, 'titulo', r.titulo),
                         _metaChip(Icons.category, 'categoria', r.categoria),
                         _metaChip(Icons.flag, 'estado', r.estado),
                         _metaChip(Icons.location_on, 'latitud', r.latitud.toString()),
                         _metaChip(Icons.location_on, 'longitud', r.longitud.toString()),
-                        _metaChip(Icons.image, 'foto_url', r.fotoUrl.isNotEmpty ? r.fotoUrl : 'Sin foto'),
                         _metaChip(Icons.access_time, 'fecha_hora', r.createdAt.toIso8601String()),
                       ],
                     ),
