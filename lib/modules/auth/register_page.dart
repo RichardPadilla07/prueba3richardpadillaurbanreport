@@ -64,8 +64,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Icon(
+                        Icons.report,
+                        size: 72,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(height: 12),
                       const Text('Crear cuenta', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 18),
                       CustomInput(
                         label: 'Nombre',
                         controller: _nameController,

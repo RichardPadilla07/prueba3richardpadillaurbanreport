@@ -62,7 +62,25 @@ class _DashboardPageState extends State<DashboardPage> {
           }
           final reports = snapshot.data ?? [];
           if (reports.isEmpty) {
-            return const Center(child: Text('No tienes reportes aún.'));
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.report, size: 64, color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Aún no tienes reportes',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Presiona el botón + para crear tu primer reporte.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black45),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
           }
           return RefreshIndicator(
             onRefresh: () async => _loadReports(),

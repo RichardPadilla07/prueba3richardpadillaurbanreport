@@ -58,8 +58,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Icon(
+                        Icons.report,
+                        size: 72,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(height: 12),
                       const Text('Recuperar contraseña', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 18),
                       CustomInput(
                         label: 'Correo',
                         controller: _emailController,

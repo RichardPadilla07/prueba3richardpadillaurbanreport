@@ -51,7 +51,7 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.location_city,
+              Icons.report,
               size: 80,
               color: Theme.of(context).primaryColor,
             ),
