@@ -18,6 +18,7 @@ class CustomInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -25,8 +26,17 @@ class CustomInput extends StatelessWidget {
         validator: validator,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: theme.inputDecorationTheme.labelStyle,
+          floatingLabelStyle: TextStyle(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          filled: true,
+          fillColor: theme.inputDecorationTheme.fillColor,
+          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         ),
       ),
     );
