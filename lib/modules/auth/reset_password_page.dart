@@ -5,7 +5,8 @@ import '../../core/widgets/custom_input.dart';
 import '../../core/widgets/custom_button.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  const ResetPasswordPage({super.key});
+  final String? code;
+  const ResetPasswordPage({super.key, this.code});
 
   @override
   State<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -49,9 +50,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final uri = Uri.base;
-    final code = uri.queryParameters['code'];
-    if (code == null || code.isEmpty) {
+    // Try code provided by router (state) first, then fallback to Uri.base (web)
+    final providedCode = widget.code ?? Uri.base.queryParameters['code'] ?? Uri.base.queryParameters['access_token'] ?? Uri.base.queryParameters['token'];
+    if (providedCode == null || providedCode.isEmpty) {
       return const Scaffold(
         body: Center(child: Text('Enlace inválido o expirado.')),
       );

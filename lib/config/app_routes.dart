@@ -71,8 +71,9 @@ class AppRoutes {
       GoRoute(
         path: '/reset-password',
         builder: (context, state) {
-          // Siempre muestra el formulario de recuperación
-          return const ResetPasswordPage();
+          // Siempre muestra el formulario de recuperación. Si viene un código en query params, lo pasamos.
+          final code = state.uri.queryParameters['code'];
+          return ResetPasswordPage(code: code);
         },
       ),
     ],
