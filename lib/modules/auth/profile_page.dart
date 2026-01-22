@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_service.dart';
 import '../../core/widgets/custom_input.dart';
 import '../../core/widgets/custom_button.dart';
@@ -17,7 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final _nameController = TextEditingController();
   int _reportCount = 0;
   bool _loading = false;
-  Timer? _refreshTimer;
+  
+  StreamSubscription? _reportsSub;
 
   @override
   void initState() {
@@ -25,10 +27,20 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = AuthService().currentUser;
     _nameController.text = user?.userMetadata?['name'] ?? '';
     _loadReportCount();
-    // Start periodic refresh of the report count (every 30 seconds)
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
-      if (mounted) _loadReportCount();
-    });
+    // Subscribe to realtime changes for this user's reports
+    if (user != null) {
+      _reportsSub = Supabase.instance.client
+          .from('reports')
+          .stream(primaryKey: ['id'])
+          .eq('usuario_id', user.id)
+          .listen((data) {
+        if (!mounted) return;
+        // data is a List of maps representing current rows for this filter
+        try {
+          setState(() => _reportCount = (data as List).length);
+        } catch (_) {}
+      });
+    }
   }
 
   Future<void> _loadReportCount() async {
@@ -60,7 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    _reportsSub?.cancel();
+    
     _nameController.dispose();
     super.dispose();
   }
@@ -78,6 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
                         radius: 36,
@@ -95,8 +109,47 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text('Nombre', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
                             const SizedBox(height: 6),
                             CustomInput(label: 'Nombre', controller: _nameController),
+                            const SizedBox(height: 8),
+                            // Save button placed near the top for quick access
+                            SizedBox(
+                              width: double.infinity,
+                              child: CustomButton(text: 'Guardar cambios', onPressed: _saveName, loading: false, color: Theme.of(context).colorScheme.primary),
+                            ),
                           ],
                         ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Report count card to the right of avatar/name
+                      Column(
+                        children: [
+                          Card(
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                              child: Column(
+                                children: [
+                                  Text('Reportes', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black54)),
+                                  const SizedBox(height: 6),
+                                  _loading
+                                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator())
+                                      : Text('$_reportCount', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.black)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: 140,
+                            child: CustomButton(
+                              text: 'Actualizar',
+                              onPressed: _loadReportCount,
+                              loading: _loading,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                        ],
                       ),
                     ],
                   ),
@@ -104,32 +157,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text('Correo', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
                   const SizedBox(height: 6),
                   Text(user.email ?? '', style: const TextStyle(color: Colors.black54)),
-                  const SizedBox(height: 18),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(text: 'Guardar cambios', onPressed: _saveName, loading: false, color: Theme.of(context).colorScheme.primary),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomButton(text: 'Cerrar sesión', onPressed: _signOut, loading: false, color: Theme.of(context).colorScheme.secondary),
-                      ),
-                    ],
-                  ),
-
                   const SizedBox(height: 28),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Reportes creados', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
-                      _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator()) : Text('$_reportCount', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black)),
-                    ],
+                  // Logout button at the bottom for clear separation
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(text: 'Cerrar sesión', onPressed: _signOut, loading: false, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(height: 8),
-                  Text('El contador refleja los reportes que has creado. Usa actualizar para sincronizar.', style: const TextStyle(color: Colors.black54)),
-                  const SizedBox(height: 12),
-                  CustomButton(text: 'Actualizar', onPressed: _loadReportCount, loading: false),
                 ],
               ),
             ),
