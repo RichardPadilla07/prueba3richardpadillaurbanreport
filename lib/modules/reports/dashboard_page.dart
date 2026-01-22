@@ -63,33 +63,134 @@ class _DashboardPageState extends State<DashboardPage> {
           if (reports.isEmpty) {
             return const Center(child: Text('No tienes reportes aún.'));
           }
-          return ListView.builder(
-            itemCount: reports.length,
-            itemBuilder: (context, i) {
-              final r = reports[i];
-              String estadoFormal;
-              switch (r.estado) {
-                case 'pendiente':
-                  estadoFormal = 'Pendiente';
-                  break;
-                case 'en_proceso':
-                  estadoFormal = 'En proceso';
-                  break;
-                case 'resuelto':
-                  estadoFormal = 'Resuelto';
-                  break;
-                default:
-                  estadoFormal = r.estado;
+          return RefreshIndicator(
+            onRefresh: () async => _loadReports(),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              int columns = 1;
+              if (width > 1100) {
+                columns = 3;
+              } else if (width > 700) {
+                columns = 2;
               }
-              return ListTile(
-                title: Text(r.titulo),
-                subtitle: Text(r.categoria),
-                trailing: Text(estadoFormal),
-                onTap: () {
-                  context.push('/detail', extra: r);
+
+              return GridView.builder(
+                padding: const EdgeInsets.all(12),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 3.5,
+                ),
+                itemCount: reports.length,
+                itemBuilder: (context, i) {
+                  final r = reports[i];
+                  String estadoFormal;
+                  switch (r.estado) {
+                    case 'pendiente':
+                      estadoFormal = 'Pendiente';
+                      break;
+                    case 'en_proceso':
+                      estadoFormal = 'En proceso';
+                      break;
+                    case 'resuelto':
+                      estadoFormal = 'Resuelto';
+                      break;
+                    default:
+                      estadoFormal = r.estado;
+                  }
+
+                  return Material(
+                    color: Theme.of(context).cardTheme.color,
+                    elevation: 2,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => context.push('/detail', extra: r),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Leading image (if exists) or placeholder icon
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.06),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: r.fotoUrl.isNotEmpty
+                                    ? Image.network(
+                                        r.fotoUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (c, e, s) => const Center(child: Icon(Icons.broken_image, color: Colors.black26)),
+                                      )
+                                    : const Center(child: Icon(Icons.report, color: Colors.black54)),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Title and category
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(r.titulo, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black)),
+                                  const SizedBox(height: 6),
+                                  Text(r.categoria, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
+                                  const SizedBox(height: 6),
+                                  if (r.descripcion.isNotEmpty)
+                                    Text(
+                                      r.descripcion,
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black45),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Estado chip (palette: black / white / yellow)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Builder(builder: (ctx) {
+                                  // Map estados to a palette that matches black/white/yellow
+                                  if (r.estado == 'pendiente') {
+                                    return Chip(
+                                      backgroundColor: Theme.of(context).colorScheme.secondary, // yellow
+                                      label: Text(estadoFormal, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w700)),
+                                    );
+                                  } else if (r.estado == 'en_proceso') {
+                                    return Chip(
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.6),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      label: Text(estadoFormal, style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w700)),
+                                    );
+                                  } else {
+                                    // resuelto and others -> black background with yellow text
+                                    return Chip(
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      label: Text(estadoFormal, style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w700)),
+                                    );
+                                  }
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
               );
-            },
+            }),
           );
         },
       ),
