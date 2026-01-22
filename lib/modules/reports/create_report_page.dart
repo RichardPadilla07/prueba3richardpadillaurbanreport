@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:go_router/go_router.dart'; // not used here
 import 'report_service.dart';
 import 'report_model.dart';
 import '../../core/widgets/custom_input.dart';
@@ -12,7 +12,8 @@ import '../../core/utils/location_helper.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'report_detail_page.dart' show capitalize;
+  bool _loadingLocation = false;
 class CreateReportPage extends StatefulWidget {
   final Report? reportToEdit;
   const CreateReportPage({super.key, this.reportToEdit});
@@ -31,7 +32,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
   double? _lat;
   double? _lng;
   bool _loading = false;
-  bool _loadingLocation = false;
   String? _error;
   bool get isEdit => widget.reportToEdit != null;
 
@@ -68,21 +68,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
     }
   }
 
-  void _pickLocation() async {
-    final result = await Navigator.of(context).push<LatLng>(
-      MaterialPageRoute(
-        builder: (context) => LocationPickerPage(
-          initial: _lat != null && _lng != null ? LatLng(_lat!, _lng!) : null,
-        ),
-      ),
-    );
-    if (result != null) {
-      setState(() {
-        _lat = result.latitude;
-        _lng = result.longitude;
-      });
-    }
-  }
+  
 
   void _pickImage() async {
     final user = Supabase.instance.client.auth.currentUser;
@@ -241,10 +227,11 @@ class _CreateReportPageState extends State<CreateReportPage> {
                         child: DropdownButtonFormField<String>(
                           value: _categoria,
                           items: AppConstants.categories
-                              .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                              .map((c) => DropdownMenuItem(value: c, child: Text(capitalize(c), style: const TextStyle(color: Colors.black))))
                               .toList(),
                           onChanged: (v) => setState(() => _categoria = v!),
-                          decoration: const InputDecoration(labelText: 'Categoría'),
+                          style: const TextStyle(color: Colors.black),
+                          decoration: const InputDecoration(labelText: 'Categoría', labelStyle: TextStyle(color: Colors.black)),
                         ),
                       ),
                     ],
@@ -254,6 +241,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     label: 'Descripción',
                     controller: _descripcionController,
                     validator: (v) => Validators.validateNotEmpty(v, 'descripción'),
+                    maxLines: 4,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
@@ -264,16 +252,19 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       DropdownMenuItem(value: 'resuelto', child: Text('Resuelto')),
                     ],
                     onChanged: (v) => setState(() => _estado = v!),
-                    decoration: const InputDecoration(labelText: 'Estado'),
+                    style: const TextStyle(color: Colors.black),
+                    decoration: const InputDecoration(labelText: 'Estado', labelStyle: TextStyle(color: Colors.black)),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: _getCurrentLocation,
-                          icon: const Icon(Icons.my_location),
-                          label: const Text('Dar ubicación actual'),
+                          onPressed: _loadingLocation ? null : _getCurrentLocation,
+                          icon: _loadingLocation
+                              ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                              : const Icon(Icons.my_location),
+                          label: Text(_loadingLocation ? 'Obteniendo...' : 'Dar ubicación actual', style: const TextStyle(color: Colors.black)),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -291,13 +282,19 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         'Latitud: ${_lat!.toStringAsFixed(6)}   Longitud: ${_lng!.toStringAsFixed(6)}',
-                        style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                        style: const TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                   if (_fotoUrl != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Image.network(_fotoUrl!, height: 180),
+                      child: Center(
+                        child: Container(
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                          padding: const EdgeInsets.all(6),
+                          child: Image.network(_fotoUrl!, height: 140, fit: BoxFit.cover),
+                        ),
+                      ),
                     ),
                   if (_error != null)
                     Padding(

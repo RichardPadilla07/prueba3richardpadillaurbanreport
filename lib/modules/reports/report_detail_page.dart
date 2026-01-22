@@ -6,6 +6,8 @@ import 'report_service.dart';
 import '../../modules/auth/auth_service.dart';
 import '../../core/widgets/custom_button.dart';
 
+String capitalize(String s) => s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+
 class ReportDetailPage extends StatefulWidget {
   final Report report;
   const ReportDetailPage({super.key, required this.report});
@@ -181,7 +183,7 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                         const SizedBox(width: 10),
                         Expanded(child: Text(authorName, style: theme.textTheme.titleLarge?.copyWith(color: Colors.black))),
                         const SizedBox(width: 12),
-                        Text(r.categoria, style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54)),
+                        Text(capitalize(r.categoria), style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54)),
                       ],
                     ),
 

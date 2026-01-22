@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'report_service.dart';
 import 'report_model.dart';
 import '../../core/widgets/loading_indicator.dart';
+import 'report_detail_page.dart' show capitalize;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -140,7 +141,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Text(r.titulo, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black)),
                                   const SizedBox(height: 6),
-                                  Text(r.categoria, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
+                                  Text(capitalize(r.categoria), style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
                                   const SizedBox(height: 6),
                                   if (r.descripcion.isNotEmpty)
                                     Text(

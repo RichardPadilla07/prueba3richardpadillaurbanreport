@@ -6,6 +6,7 @@ class CustomInput extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final int? maxLines;
 
   const CustomInput({
     super.key,
@@ -14,6 +15,7 @@ class CustomInput extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.keyboardType,
+    this.maxLines,
   });
 
   @override
@@ -25,6 +27,7 @@ class CustomInput extends StatelessWidget {
         controller: controller,
         validator: validator,
         obscureText: obscureText,
+        maxLines: maxLines ?? 1,
         keyboardType: keyboardType,
         // Ensure typed text appears with high contrast (black on white)
         style: (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(color: theme.colorScheme.onBackground),

@@ -1,7 +1,7 @@
 // Test básico de la app UrbanReport
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:prueba3richardpadillaurbanreport/app.dart';
+// import 'package:prueba3richardpadillaurbanreport/app.dart';
 
 void main() {
   testWidgets('UrbanReport app smoke test', (WidgetTester tester) async {
