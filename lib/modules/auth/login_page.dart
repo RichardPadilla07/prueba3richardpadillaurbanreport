@@ -81,17 +81,20 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ),
                       const SizedBox(height: 16),
+                      // Primary action
                       CustomButton(
                         text: 'Iniciar sesión',
                         onPressed: _login,
                         loading: _loading,
                       ),
+                      const SizedBox(height: 16),
+                      // Secondary actions separated for clarity
                       CustomButton(
                         text: '¿Olvidaste tu contraseña?',
                         onPressed: () => context.push('/forgot'),
                         color: Colors.black,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       CustomButton(
                         text: 'Crear cuenta',
                         onPressed: () => context.push('/register'),

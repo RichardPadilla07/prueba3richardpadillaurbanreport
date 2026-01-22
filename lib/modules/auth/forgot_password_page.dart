@@ -76,6 +76,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(_message!),
                         ),
+                      const SizedBox(height: 12),
                       CustomButton(
                         text: 'Volver a login',
                         onPressed: () => context.go('/login'),

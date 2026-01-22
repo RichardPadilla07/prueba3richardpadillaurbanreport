@@ -88,11 +88,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ),
                       const SizedBox(height: 16),
+                      // Primary action
                       CustomButton(
                         text: 'Registrarse',
                         onPressed: _register,
                         loading: _loading,
                       ),
+                      const SizedBox(height: 16),
+                      // Link back to login
                       CustomButton(
                         text: '¿Ya tienes cuenta? Inicia sesión',
                         onPressed: () => context.go('/login'),
