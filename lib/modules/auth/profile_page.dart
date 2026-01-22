@@ -90,69 +90,104 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 36,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: Text(
-                          (user.userMetadata?['name'] ?? user.email ?? 'U').toString().split(' ').map((s) => s.isNotEmpty ? s[0] : '').take(2).join(),
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
+                  LayoutBuilder(builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 500;
+                    final avatar = CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      child: Text(
+                        (user.userMetadata?['name'] ?? user.email ?? 'U').toString().split(' ').map((s) => s.isNotEmpty ? s[0] : '').take(2).join(),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Nombre', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
-                            const SizedBox(height: 6),
-                            CustomInput(label: 'Nombre', controller: _nameController),
-                            const SizedBox(height: 8),
-                            // Save button placed near the top for quick access
-                            SizedBox(
-                              width: double.infinity,
-                              child: CustomButton(text: 'Guardar cambios', onPressed: _saveName, loading: false, color: Theme.of(context).colorScheme.primary),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Report count card to the right of avatar/name
-                      Column(
-                        children: [
-                          Card(
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                              child: Column(
-                                children: [
-                                  Text('Reportes', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black54)),
-                                  const SizedBox(height: 6),
-                                  _loading
-                                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator())
-                                      : Text('$_reportCount', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.black)),
-                                ],
-                              ),
+                    );
+
+                    final reportCard = Column(
+                      children: [
+                        Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                            child: Column(
+                              children: [
+                                Text('Reportes', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black54)),
+                                const SizedBox(height: 6),
+                                _loading
+                                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator())
+                                    : Text('$_reportCount', style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.black)),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          SizedBox(
-                            width: 140,
-                            child: CustomButton(
-                              text: 'Actualizar',
-                              onPressed: _loadReportCount,
-                              loading: _loading,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: 140,
+                          child: CustomButton(
+                            text: 'Actualizar',
+                            onPressed: _loadReportCount,
+                            loading: _loading,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                      ],
+                    );
+
+                    if (isSmall) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              avatar,
+                              const SizedBox(width: 12),
+                              reportCard,
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Nombre', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
                           ),
                           const SizedBox(height: 6),
+                          CustomInput(label: 'Nombre', controller: _nameController),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: CustomButton(text: 'Guardar cambios', onPressed: _saveName, loading: false, color: Theme.of(context).colorScheme.primary),
+                          ),
                         ],
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+
+                    // Large layout (desktop/tablet)
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        avatar,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Nombre', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
+                              const SizedBox(height: 6),
+                              CustomInput(label: 'Nombre', controller: _nameController),
+                              const SizedBox(height: 8),
+                              // Save button placed near the top for quick access
+                              SizedBox(
+                                width: double.infinity,
+                                child: CustomButton(text: 'Guardar cambios', onPressed: _saveName, loading: false, color: Theme.of(context).colorScheme.primary),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        reportCard,
+                      ],
+                    );
+                  }),
                   const SizedBox(height: 18),
                   Text('Correo', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
                   const SizedBox(height: 6),
