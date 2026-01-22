@@ -17,12 +17,19 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Determine foreground color based on provided background color for contrast
+    final Color background = color ?? theme.colorScheme.primary;
+    final Brightness bgBrightness = ThemeData.estimateBrightnessForColor(background);
+    final Color foreground = color != null
+        ? (bgBrightness == Brightness.light ? Colors.black : Colors.white)
+        : theme.colorScheme.onPrimary;
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.onPrimary,
+          backgroundColor: background,
+          foregroundColor: foreground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
