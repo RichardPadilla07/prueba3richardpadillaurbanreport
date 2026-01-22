@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/widgets/custom_input.dart';
+import '../../core/widgets/custom_button.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -55,7 +57,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Restablecer contraseña')),
+      // No AppBar for this screen (user requested to remove top title/background)
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -70,18 +72,29 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Nueva contraseña', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      const Text('Nueva contraseña', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
                       const SizedBox(height: 24),
-                      TextFormField(
+                      CustomInput(
+                        label: 'Contraseña',
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: const InputDecoration(labelText: 'Contraseña'),
                         validator: (v) => v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loading ? null : _resetPassword,
-                        child: _loading ? const CircularProgressIndicator() : const Text('Actualizar contraseña'),
+                      // Centered primary action with our CustomButton style
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: CustomButton(
+                                text: 'Actualizar contraseña',
+                                onPressed: _resetPassword,
+                                loading: _loading,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       if (_message != null)
                         Padding(

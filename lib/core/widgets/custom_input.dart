@@ -26,7 +26,9 @@ class CustomInput extends StatelessWidget {
         validator: validator,
         obscureText: obscureText,
         keyboardType: keyboardType,
-        style: theme.textTheme.bodyLarge,
+        // Ensure typed text appears with high contrast (black on white)
+        style: (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(color: theme.colorScheme.onBackground),
+        cursorColor: theme.colorScheme.onBackground,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: theme.inputDecorationTheme.labelStyle,
